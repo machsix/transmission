@@ -416,6 +416,13 @@ func NewAddCmdByURL(url string) *Command {
 	return cmd
 }
 
+func NewAddCmdByURLWithDir(url string, dir string) *Command {
+	cmd := NewAddCmd()
+	cmd.Arguments.Filename = url
+	cmd.Arguments.DownloadDir = dir
+	return cmd
+}
+
 func NewAddCmdByFilename(filename string) *Command {
 	cmd := NewAddCmd()
 	cmd.Arguments.Filename = filename
