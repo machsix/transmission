@@ -3,7 +3,7 @@ Golang lib for Transmission API
 
 ### Installation
 
-    $ go get github.com/tubbebubbe/transmission
+    $ go get github.com/machsix/transmission
 
 ### Usage
 ```go
@@ -11,14 +11,13 @@ package main
 
 import (
 	"log"
-
-	"github.com/tubbebubbe/transmission"
+	"./transmission"
 )
 
 func main() {
-	client := transmission.New("http://127.0.0.1:9091", "", "")
+	Client,_ := transmission.New("http://localhost:9092/transmission/rpc", "foo", "bar")
 
-	torrents, err := client.GetTorrents()
+	torrents, err := Client.GetTorrents()
 	if err != nil {
 		log.Panic(err)
 	}
@@ -38,6 +37,13 @@ func main() {
 		log.Println("   PercentDone:   ", torrent.PercentDone)
 		log.Println("   SeedRatioMode: ", torrent.SeedRatioMode)
 	}
+
+	url := "magnet:?xt=urn:btih:547fbd07ff0d6888902a7382184fa194975c5bef"
+	cmd := transmission.NewAddCmdByURL(url)
+
+  torrent, err := Client.ExecuteAddCommand(cmd)
+	log.Println(err)
+	log.Printf("%+v",torrent)
 }
 ```
 

@@ -20,6 +20,8 @@ const (
 	StatusSeeding
 )
 
+var ErrTorrentDuplicate = errors.New("torrent-duplicate")
+
 //TransmissionClient to talk to transmission
 type TransmissionClient struct {
 	apiclient *ApiClient
@@ -40,6 +42,7 @@ type arguments struct {
 	MetaInfo     string       `json:"metainfo,omitempty"`
 	Filename     string       `json:"filename,omitempty"`
 	TorrentAdded TorrentAdded `json:"torrent-added"`
+	TorrentDuplicate TorrentAdded `json:"torrent-duplicate"`
 	// Stats
 	ActiveTorrentCount int             `json:"activeTorrentCount"`
 	CumulativeStats    cumulativeStats `json:"cumulative-stats"`
@@ -478,7 +481,11 @@ func (ac *TransmissionClient) ExecuteAddCommand(addCmd *Command) (TorrentAdded, 
 	if err != nil {
 		return TorrentAdded{}, err
 	}
-	return outCmd.Arguments.TorrentAdded, nil
+	if outCmd.Arguments.TorrentAdded.Name != "" {
+		return outCmd.Arguments.TorrentAdded, nil
+	} else {
+		return outCmd.Arguments.TorrentDuplicate, ErrTorrentDuplicate
+	}
 }
 
 func encodeFile(file string) (string, error) {
